@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'features/auth/login/screens/login_Screen.dart';
+import 'features/on_boarding/screens/on_boarding_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Listen Lit App',
-      home: LoginScreen(),
+      home: OnBoardingScreen(),
     );
   }
 }

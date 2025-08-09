@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../app/constant/app_colors.dart';
 import '../../../../app/constant/app_images.dart';
+import '../../signup/screens/sign_up_screen.dart';
 import '../widgets/background_image_container.dart';
 import '../widgets/custom_rich_text.dart';
 import '../widgets/divider_row.dart';
@@ -117,7 +118,14 @@ class LoginScreen extends StatelessWidget {
                           fontFamily: 'Inter',
                           fontWeight: FontWeight.w700,
                         ),
-                        onTab: () {},
+                        onTab: () {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SignUpScreen(),
+                            ),
+                          );
+                        },
                       ),
                     ],
                   ),
