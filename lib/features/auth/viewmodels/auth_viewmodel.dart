@@ -26,7 +26,12 @@ class AuthViewModel extends ChangeNotifier {
     notifyListeners();
 
     await Future.delayed(const Duration(seconds: 1)); // simulate network
-    _currentUser = UserModel(uid: '1', name: email.split('@')[0], email: email, avatarUrl: 'https://picsum.photos/seed/user_avatar/200/200');
+    _currentUser = UserModel(
+      uid: '1',
+      name: email.split('@')[0],
+      email: email,
+      avatarUrl: '',
+    );
     await StorageService.saveUser(_currentUser!.toJson());
 
     _isLoading = false;
@@ -39,7 +44,7 @@ class AuthViewModel extends ChangeNotifier {
     notifyListeners();
 
     await Future.delayed(const Duration(seconds: 1)); // simulate network
-    _currentUser = UserModel(uid: '1', name: name, email: email, avatarUrl: 'https://picsum.photos/seed/user_avatar/200/200');
+    _currentUser = UserModel(uid: '1', name: name, email: email, avatarUrl: '');
     await StorageService.saveUser(_currentUser!.toJson());
 
     _isLoading = false;
@@ -47,7 +52,11 @@ class AuthViewModel extends ChangeNotifier {
     return true;
   }
 
-  Future<void> updateProfile(String name, String email, String avatarUrl) async {
+  Future<void> updateProfile(
+    String name,
+    String email,
+    String avatarUrl,
+  ) async {
     if (_currentUser == null) return;
     _currentUser = UserModel(
       uid: _currentUser!.uid,

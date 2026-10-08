@@ -5,11 +5,7 @@ class AppErrorView extends StatelessWidget {
   final String message;
   final VoidCallback onRetry;
 
-  const AppErrorView({
-    super.key,
-    required this.message,
-    required this.onRetry,
-  });
+  const AppErrorView({super.key, required this.message, required this.onRetry});
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +24,9 @@ class AppErrorView extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: AppColor.kPrimary),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColor.kPrimary,
+              ),
               onPressed: onRetry,
               child: const Text('Retry', style: TextStyle(color: Colors.white)),
             ),

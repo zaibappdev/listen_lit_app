@@ -1,34 +1,45 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import '../../../data/models/song_model.dart';
-import '../../../data/repositories/music_repository.dart';
 import '../../../data/services/storage_service.dart';
 
 class LibraryViewModel extends ChangeNotifier {
-  final MusicRepository _repository = MusicRepository();
   List<SongModel> favorites = [];
   List<SongModel> recentlyPlayed = [];
   List<SongModel> downloadedSongs = [];
+  late final StreamSubscription<dynamic> _favoriteSubscription;
+  late final StreamSubscription<dynamic> _recentSubscription;
 
   LibraryViewModel() {
+    _favoriteSubscription = StorageService.favoriteChanges.listen(
+      (_) => loadLibrary(),
+    );
+    _recentSubscription = StorageService.recentChanges.listen(
+      (_) => loadLibrary(),
+    );
     loadLibrary();
   }
 
   void loadLibrary() {
-    final all = _repository.getAllSongs();
-    favorites = all.where((s) => StorageService.isFavorite(s.id)).toList();
-    
-    final recentIds = StorageService.getRecent();
-    recentlyPlayed = all.where((s) => recentIds.contains(s.id)).toList();
-    
-    downloadedSongs = all.take(10).toList(); // Simulated downloaded tracks
+    favorites = StorageService.getFavoriteSongs();
+    recentlyPlayed = StorageService.getRecentSongs();
+    downloadedSongs = const [];
 
     notifyListeners();
   }
 
   void toggleFavorite(SongModel song) {
     song.isFavorite = !song.isFavorite;
-    StorageService.toggleFavorite(song.id, song.isFavorite);
-    favorites = _repository.getAllSongs().where((s) => StorageService.isFavorite(s.id)).toList();
+    StorageService.toggleFavorite(song.id, song.isFavorite, song: song);
+    favorites = StorageService.getFavoriteSongs();
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _favoriteSubscription.cancel();
+    _recentSubscription.cancel();
+    super.dispose();
   }
 }

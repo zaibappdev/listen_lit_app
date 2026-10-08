@@ -19,7 +19,10 @@ class ProfileScreen extends StatelessWidget {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: AppColor.kSamiDarkColor,
-        title: Text('Edit Profile', style: TextStyle(color: AppColor.kLightAccentColor)),
+        title: Text(
+          'Edit Profile',
+          style: TextStyle(color: AppColor.kLightAccentColor),
+        ),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -87,7 +90,13 @@ class ProfileScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: Text('Profile', style: TextStyle(color: AppColor.kLightAccentColor, fontWeight: FontWeight.bold)),
+        title: Text(
+          'Profile',
+          style: TextStyle(
+            color: AppColor.kLightAccentColor,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         centerTitle: true,
         actions: [
           IconButton(
@@ -117,14 +126,24 @@ class ProfileScreen extends StatelessWidget {
                         ),
                       )
                     : Text(
-                        user?.name.isNotEmpty == true ? user!.name[0].toUpperCase() : 'U',
-                        style: const TextStyle(fontSize: 36, color: Colors.white, fontWeight: FontWeight.bold),
+                        user?.name.isNotEmpty == true
+                            ? user!.name[0].toUpperCase()
+                            : 'U',
+                        style: const TextStyle(
+                          fontSize: 36,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
               ),
               const SizedBox(height: 16),
               Text(
                 user?.name ?? 'Music Lover',
-                style: TextStyle(color: AppColor.kLightAccentColor, fontSize: 22, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  color: AppColor.kLightAccentColor,
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const SizedBox(height: 4),
               Text(
@@ -139,14 +158,21 @@ class ProfileScreen extends StatelessWidget {
                 alignment: Alignment.centerLeft,
                 child: Text(
                   'Favorite Songs (${profileVM.favorites.length})',
-                  style: TextStyle(color: AppColor.kLightAccentColor, fontSize: 18, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    color: AppColor.kLightAccentColor,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
               const SizedBox(height: 12),
               profileVM.favorites.isEmpty
                   ? Padding(
                       padding: const EdgeInsets.all(16.0),
-                      child: Text('No favorite songs yet', style: TextStyle(color: AppColor.kGreyColor)),
+                      child: Text(
+                        'No favorite songs yet',
+                        style: TextStyle(color: AppColor.kGreyColor),
+                      ),
                     )
                   : ListView.builder(
                       shrinkWrap: true,
@@ -162,9 +188,16 @@ class ProfileScreen extends StatelessWidget {
                             height: 48,
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          title: Text(song.title, style: TextStyle(color: AppColor.kLightAccentColor)),
-                          subtitle: Text(song.artist, style: TextStyle(color: AppColor.kGreyColor)),
-                          onTap: () => playerVM.playSong(profileVM.favorites, index),
+                          title: Text(
+                            song.title,
+                            style: TextStyle(color: AppColor.kLightAccentColor),
+                          ),
+                          subtitle: Text(
+                            song.artist,
+                            style: TextStyle(color: AppColor.kGreyColor),
+                          ),
+                          onTap: () =>
+                              playerVM.playSong(profileVM.favorites, index),
                         );
                       },
                     ),
@@ -174,14 +207,21 @@ class ProfileScreen extends StatelessWidget {
                 alignment: Alignment.centerLeft,
                 child: Text(
                   'Recently Played (${profileVM.recentlyPlayed.length})',
-                  style: TextStyle(color: AppColor.kLightAccentColor, fontSize: 18, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    color: AppColor.kLightAccentColor,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
               const SizedBox(height: 12),
               profileVM.recentlyPlayed.isEmpty
                   ? Padding(
                       padding: const EdgeInsets.all(16.0),
-                      child: Text('No recently played tracks', style: TextStyle(color: AppColor.kGreyColor)),
+                      child: Text(
+                        'No recently played tracks',
+                        style: TextStyle(color: AppColor.kGreyColor),
+                      ),
                     )
                   : ListView.builder(
                       shrinkWrap: true,
@@ -197,9 +237,18 @@ class ProfileScreen extends StatelessWidget {
                             height: 48,
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          title: Text(song.title, style: TextStyle(color: AppColor.kLightAccentColor)),
-                          subtitle: Text(song.artist, style: TextStyle(color: AppColor.kGreyColor)),
-                          onTap: () => playerVM.playSong(profileVM.recentlyPlayed, index),
+                          title: Text(
+                            song.title,
+                            style: TextStyle(color: AppColor.kLightAccentColor),
+                          ),
+                          subtitle: Text(
+                            song.artist,
+                            style: TextStyle(color: AppColor.kGreyColor),
+                          ),
+                          onTap: () => playerVM.playSong(
+                            profileVM.recentlyPlayed,
+                            index,
+                          ),
                         );
                       },
                     ),

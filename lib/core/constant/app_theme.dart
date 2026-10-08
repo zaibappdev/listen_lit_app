@@ -1,61 +1,74 @@
 import 'package:flutter/material.dart';
-import 'app_colors.dart';
 
 class AppTheme {
-  static ThemeData get lightTheme => ThemeData(
-        useMaterial3: true,
-        brightness: Brightness.light,
-        scaffoldBackgroundColor: const Color(0xFFF7F8FA),
-        primaryColor: AppColor.kPrimary,
-        colorScheme: ColorScheme.light(
-          primary: AppColor.kPrimary,
-          secondary: AppColor.kPrimary,
-          surface: Colors.white,
-        ),
-        fontFamily: 'Inter',
-        textTheme: TextTheme(
-          displayLarge: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.black87),
-          titleLarge: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: Colors.black87),
-          bodyLarge: const TextStyle(fontSize: 16, fontWeight: FontWeight.normal, color: Colors.black87),
-          bodyMedium: TextStyle(fontSize: 14, fontWeight: FontWeight.normal, color: Colors.grey[700]),
-        ),
-      );
+  static const Color brand = Color(0xFF9B59B6);
+  static const _transparentOverlay = WidgetStatePropertyAll<Color?>(
+    Colors.transparent,
+  );
 
-  static ThemeData get darkTheme => ThemeData(
-        useMaterial3: true,
-        brightness: Brightness.dark,
-        scaffoldBackgroundColor: AppColor.kBGColor,
-        primaryColor: AppColor.kPrimary,
-        colorScheme: ColorScheme.dark(
-          primary: AppColor.kPrimary,
-          secondary: AppColor.kLightAccentColor,
-          surface: AppColor.kSamiDarkColor,
-        ),
-        fontFamily: 'Inter',
-        textTheme: TextTheme(
-          displayLarge: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: AppColor.kLightAccentColor),
-          titleLarge: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: AppColor.kLightAccentColor),
-          bodyLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.normal, color: AppColor.kWhiteColor),
-          bodyMedium: TextStyle(fontSize: 14, fontWeight: FontWeight.normal, color: AppColor.kGreyColor),
-        ),
-      );
+  static ThemeData _build(ColorScheme scheme) => ThemeData(
+    useMaterial3: true,
+    colorScheme: scheme,
+    scaffoldBackgroundColor: scheme.surface,
+    splashFactory: NoSplash.splashFactory,
+    splashColor: Colors.transparent,
+    highlightColor: Colors.transparent,
+    hoverColor: Colors.transparent,
+    appBarTheme: AppBarTheme(
+      backgroundColor: scheme.surface,
+      foregroundColor: scheme.onSurface,
+      surfaceTintColor: Colors.transparent,
+      elevation: 0,
+    ),
+    cardTheme: const CardThemeData(surfaceTintColor: Colors.transparent),
+    bottomSheetTheme: const BottomSheetThemeData(
+      surfaceTintColor: Colors.transparent,
+    ),
+    listTileTheme: const ListTileThemeData(
+      enableFeedback: false,
+      selectedTileColor: Colors.transparent,
+    ),
+    iconButtonTheme: const IconButtonThemeData(
+      style: ButtonStyle(overlayColor: _transparentOverlay),
+    ),
+    textButtonTheme: const TextButtonThemeData(
+      style: ButtonStyle(overlayColor: _transparentOverlay),
+    ),
+    elevatedButtonTheme: const ElevatedButtonThemeData(
+      style: ButtonStyle(overlayColor: _transparentOverlay),
+    ),
+    filledButtonTheme: const FilledButtonThemeData(
+      style: ButtonStyle(overlayColor: _transparentOverlay),
+    ),
+    navigationBarTheme: const NavigationBarThemeData(
+      overlayColor: _transparentOverlay,
+      indicatorColor: Color(0x229B59B6),
+    ),
+    tabBarTheme: const TabBarThemeData(
+      overlayColor: _transparentOverlay,
+      splashFactory: NoSplash.splashFactory,
+    ),
+    popupMenuTheme: PopupMenuThemeData(
+      color: scheme.surfaceContainer,
+      surfaceTintColor: Colors.transparent,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+    ),
+    switchTheme: const SwitchThemeData(overlayColor: _transparentOverlay),
+  );
 
-  static ThemeData get amoledTheme => ThemeData(
-        useMaterial3: true,
-        brightness: Brightness.dark,
-        scaffoldBackgroundColor: Colors.black,
-        primaryColor: AppColor.kPrimary,
-        colorScheme: const ColorScheme.dark(
-          primary: Color(0xFFCA7CD8),
-          secondary: Color(0xFFF4E5F7),
-          surface: Color(0xFF121212),
-        ),
-        fontFamily: 'Inter',
-        textTheme: TextTheme(
-          displayLarge: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white),
-          titleLarge: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: Colors.white),
-          bodyLarge: const TextStyle(fontSize: 16, fontWeight: FontWeight.normal, color: Colors.white),
-          bodyMedium: TextStyle(fontSize: 14, fontWeight: FontWeight.normal, color: Colors.grey[400]),
-        ),
-      );
+  static ThemeData get lightTheme => _build(
+    ColorScheme.fromSeed(
+      seedColor: brand,
+      brightness: Brightness.light,
+      surface: const Color(0xFFF8F7FA),
+    ),
+  );
+
+  static ThemeData get darkTheme => _build(
+    ColorScheme.fromSeed(
+      seedColor: brand,
+      brightness: Brightness.dark,
+      surface: const Color(0xFF17151A),
+    ),
+  );
 }

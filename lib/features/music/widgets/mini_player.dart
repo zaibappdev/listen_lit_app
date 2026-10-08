@@ -72,15 +72,20 @@ class MiniPlayer extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     song.artist,
-                    style: TextStyle(
-                      color: AppColor.kGreyColor,
-                      fontSize: 12,
-                    ),
+                    style: TextStyle(color: AppColor.kGreyColor, fontSize: 12),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
+            ),
+            IconButton(
+              tooltip: 'Previous',
+              icon: Icon(
+                Icons.skip_previous,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+              onPressed: () => playerVM.previous(),
             ),
             IconButton(
               icon: Icon(

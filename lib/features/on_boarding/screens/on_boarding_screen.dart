@@ -55,7 +55,10 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
         context: context,
         builder: (context) => AlertDialog(
           backgroundColor: AppColor.kSamiDarkColor,
-          title: Text('Permission Required', style: TextStyle(color: AppColor.kLightAccentColor)),
+          title: Text(
+            'Permission Required',
+            style: TextStyle(color: AppColor.kLightAccentColor),
+          ),
           content: Text(
             'Storage permission is permanently denied. Please enable it in app settings to play music from your device.',
             style: TextStyle(color: AppColor.kGreyColor),
@@ -63,21 +66,31 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text('Cancel', style: TextStyle(color: AppColor.kGreyColor)),
+              child: Text(
+                'Cancel',
+                style: TextStyle(color: AppColor.kGreyColor),
+              ),
             ),
             TextButton(
               onPressed: () async {
                 Navigator.pop(context);
                 await openAppSettings();
               },
-              child: Text('Open Settings', style: TextStyle(color: AppColor.kPrimary)),
+              child: Text(
+                'Open Settings',
+                style: TextStyle(color: AppColor.kPrimary),
+              ),
             ),
           ],
         ),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Storage access is required to access local device music.')),
+        const SnackBar(
+          content: Text(
+            'Storage access is required to access local device music.',
+          ),
+        ),
       );
       await StorageService.setPermissionHandled(true);
       if (!mounted) return;

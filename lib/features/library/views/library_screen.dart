@@ -22,7 +22,13 @@ class LibraryScreen extends StatelessWidget {
               appBar: AppBar(
                 backgroundColor: Colors.transparent,
                 elevation: 0,
-                title: Text('Your Library', style: TextStyle(color: AppColor.kLightAccentColor, fontWeight: FontWeight.bold)),
+                title: Text(
+                  'Your Library',
+                  style: TextStyle(
+                    color: AppColor.kLightAccentColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 centerTitle: true,
                 bottom: TabBar(
                   labelColor: AppColor.kPrimary,
@@ -37,9 +43,24 @@ class LibraryScreen extends StatelessWidget {
               ),
               body: TabBarView(
                 children: [
-                  _buildSongList(libraryVM.favorites, playerVM, libraryVM, 'No favorite tracks yet'),
-                  _buildSongList(libraryVM.recentlyPlayed, playerVM, libraryVM, 'No recently played tracks'),
-                  _buildSongList(libraryVM.downloadedSongs, playerVM, libraryVM, 'No downloaded tracks'),
+                  _buildSongList(
+                    libraryVM.favorites,
+                    playerVM,
+                    libraryVM,
+                    'No favorite tracks yet',
+                  ),
+                  _buildSongList(
+                    libraryVM.recentlyPlayed,
+                    playerVM,
+                    libraryVM,
+                    'No recently played tracks',
+                  ),
+                  _buildSongList(
+                    libraryVM.downloadedSongs,
+                    playerVM,
+                    libraryVM,
+                    'No downloaded tracks',
+                  ),
                 ],
               ),
             ),
@@ -49,7 +70,12 @@ class LibraryScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSongList(List<SongModel> songs, PlayerViewModel playerVM, LibraryViewModel libraryVM, String emptyMessage) {
+  Widget _buildSongList(
+    List<SongModel> songs,
+    PlayerViewModel playerVM,
+    LibraryViewModel libraryVM,
+    String emptyMessage,
+  ) {
     if (songs.isEmpty) {
       return Center(
         child: Text(
@@ -71,8 +97,17 @@ class LibraryScreen extends StatelessWidget {
             height: 50,
             borderRadius: BorderRadius.circular(8),
           ),
-          title: Text(song.title, style: TextStyle(color: AppColor.kLightAccentColor, fontWeight: FontWeight.w600)),
-          subtitle: Text(song.artist, style: TextStyle(color: AppColor.kGreyColor)),
+          title: Text(
+            song.title,
+            style: TextStyle(
+              color: AppColor.kLightAccentColor,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          subtitle: Text(
+            song.artist,
+            style: TextStyle(color: AppColor.kGreyColor),
+          ),
           trailing: IconButton(
             icon: Icon(
               song.isFavorite ? Icons.favorite : Icons.favorite_border,

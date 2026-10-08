@@ -1,5 +1,5 @@
 name: listen_lit_app
-description: "A new Flutter project."
+description: "Listen Lit: a music player for local and licensed online audio."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -35,6 +35,8 @@ dependencies:
   cupertino_icons: ^1.0.8
   provider: ^6.1.2
   just_audio: ^0.9.42
+  audio_service: ^0.18.19
+  audio_session: ^0.1.25
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   path_provider: ^2.1.2
@@ -43,6 +45,7 @@ dependencies:
   palette_generator: ^0.3.3+5
   shared_preferences: ^2.3.2
   share_plus: ^10.1.0
+  http: ^1.5.0
 
 dev_dependencies:
   flutter_test:

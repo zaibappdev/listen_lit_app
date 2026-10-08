@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/constant/app_colors.dart';
+import '../../../../data/models/song_model.dart';
 import '../../music/viewmodels/player_viewmodel.dart';
 import '../viewmodels/home_viewmodel.dart';
 import '../../profile/views/profile_screen.dart';
@@ -26,7 +27,7 @@ class HomeScreen extends StatelessWidget {
             if (homeVM.isLocalSection) {
               await homeVM.loadLocalMusic();
             } else {
-              homeVM.loadData();
+              await homeVM.loadData();
             }
           },
           child: SingleChildScrollView(
@@ -46,7 +47,10 @@ class HomeScreen extends StatelessWidget {
                         children: [
                           Text(
                             'Welcome back,',
-                            style: TextStyle(color: AppColor.kGreyColor, fontSize: 14),
+                            style: TextStyle(
+                              color: AppColor.kGreyColor,
+                              fontSize: 14,
+                            ),
                           ),
                           const SizedBox(height: 4),
                           Text(
@@ -63,7 +67,9 @@ class HomeScreen extends StatelessWidget {
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (_) => const ProfileScreen()),
+                            MaterialPageRoute(
+                              builder: (_) => const ProfileScreen(),
+                            ),
                           );
                         },
                         child: CircleAvatar(
@@ -72,11 +78,22 @@ class HomeScreen extends StatelessWidget {
                           child: user?.avatarUrl.isNotEmpty == true
                               ? ClipRRect(
                                   borderRadius: BorderRadius.circular(24),
-                                  child: Image.network(user!.avatarUrl, width: 48, height: 48, fit: BoxFit.cover),
+                                  child: Image.network(
+                                    user!.avatarUrl,
+                                    width: 48,
+                                    height: 48,
+                                    fit: BoxFit.cover,
+                                  ),
                                 )
                               : Text(
-                                  user?.name.isNotEmpty == true ? user!.name[0].toUpperCase() : 'U',
-                                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+                                  user?.name.isNotEmpty == true
+                                      ? user!.name[0].toUpperCase()
+                                      : 'U',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                  ),
                                 ),
                         ),
                       ),
@@ -97,18 +114,22 @@ class HomeScreen extends StatelessWidget {
                       children: [
                         Expanded(
                           child: GestureDetector(
-                            onTap: () => homeVM.switchSection(false),
+                            onTap: () => homeVM.switchSection(true),
                             child: Container(
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               decoration: BoxDecoration(
-                                color: !homeVM.isLocalSection ? AppColor.kPrimary : Colors.transparent,
+                                color: homeVM.isLocalSection
+                                    ? AppColor.kPrimary
+                                    : Colors.transparent,
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Center(
                                 child: Text(
-                                  'Online Music',
+                                  'Local (Device)',
                                   style: TextStyle(
-                                    color: !homeVM.isLocalSection ? Colors.white : AppColor.kGreyColor,
+                                    color: homeVM.isLocalSection
+                                        ? Colors.white
+                                        : AppColor.kGreyColor,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -118,18 +139,22 @@ class HomeScreen extends StatelessWidget {
                         ),
                         Expanded(
                           child: GestureDetector(
-                            onTap: () => homeVM.switchSection(true),
+                            onTap: () => homeVM.switchSection(false),
                             child: Container(
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               decoration: BoxDecoration(
-                                color: homeVM.isLocalSection ? AppColor.kPrimary : Colors.transparent,
+                                color: !homeVM.isLocalSection
+                                    ? AppColor.kPrimary
+                                    : Colors.transparent,
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Center(
                                 child: Text(
-                                  'Local (Device)',
+                                  'Online Music',
                                   style: TextStyle(
-                                    color: homeVM.isLocalSection ? Colors.white : AppColor.kGreyColor,
+                                    color: !homeVM.isLocalSection
+                                        ? Colors.white
+                                        : AppColor.kGreyColor,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -163,19 +188,35 @@ class HomeScreen extends StatelessWidget {
                       ),
                       child: Column(
                         children: [
-                          Icon(Icons.music_off, size: 48, color: AppColor.kPrimary),
+                          Icon(
+                            Icons.music_off,
+                            size: 48,
+                            color: AppColor.kPrimary,
+                          ),
                           const SizedBox(height: 12),
                           Text(
                             'No music found on your device. Here is some online music for you.',
-                            style: TextStyle(color: AppColor.kLightAccentColor, fontSize: 16, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                              color: AppColor.kLightAccentColor,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 16),
                           ElevatedButton.icon(
-                            style: ElevatedButton.styleFrom(backgroundColor: AppColor.kPrimary),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColor.kPrimary,
+                            ),
                             onPressed: () => homeVM.loadLocalMusic(),
-                            icon: const Icon(Icons.refresh, color: Colors.white),
-                            label: const Text('Rescan', style: TextStyle(color: Colors.white)),
+                            icon: const Icon(
+                              Icons.refresh,
+                              color: Colors.white,
+                            ),
+                            label: const Text(
+                              'Rescan',
+                              style: TextStyle(color: Colors.white),
+                            ),
                           ),
                         ],
                       ),
@@ -185,7 +226,11 @@ class HomeScreen extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       child: Text(
                         'Featured Online Tracks',
-                        style: TextStyle(color: AppColor.kLightAccentColor, fontSize: 18, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          color: AppColor.kLightAccentColor,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -204,9 +249,19 @@ class HomeScreen extends StatelessWidget {
                             height: 50,
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          title: Text(song.title, style: TextStyle(color: AppColor.kLightAccentColor, fontWeight: FontWeight.w600)),
-                          subtitle: Text(song.artist, style: TextStyle(color: AppColor.kGreyColor)),
-                          onTap: () => playerVM.playSong(homeVM.featuredSongs, index),
+                          title: Text(
+                            song.title,
+                            style: TextStyle(
+                              color: AppColor.kLightAccentColor,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          subtitle: Text(
+                            _creditLine(song),
+                            style: TextStyle(color: AppColor.kGreyColor),
+                          ),
+                          onTap: () =>
+                              playerVM.playSong(homeVM.featuredSongs, index),
                         );
                       },
                     ),
@@ -217,29 +272,43 @@ class HomeScreen extends StatelessWidget {
                       child: ListView(
                         scrollDirection: Axis.horizontal,
                         padding: const EdgeInsets.symmetric(horizontal: 16),
-                        children: ['Songs', 'Albums', 'Artists', 'Folders', 'Playlists'].map((tab) {
-                          final isSelected = homeVM.localSubTab == tab;
-                          return GestureDetector(
-                            onTap: () => homeVM.setLocalSubTab(tab),
-                            child: Container(
-                              margin: const EdgeInsets.only(right: 8),
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                              decoration: BoxDecoration(
-                                color: isSelected ? AppColor.kPrimary : AppColor.kSamiDarkColor,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  tab,
-                                  style: TextStyle(
-                                    color: isSelected ? Colors.white : AppColor.kLightAccentColor,
-                                    fontWeight: FontWeight.w500,
+                        children:
+                            [
+                              'Songs',
+                              'Albums',
+                              'Artists',
+                              'Folders',
+                              'Playlists',
+                            ].map((tab) {
+                              final isSelected = homeVM.localSubTab == tab;
+                              return GestureDetector(
+                                onTap: () => homeVM.setLocalSubTab(tab),
+                                child: Container(
+                                  margin: const EdgeInsets.only(right: 8),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 8,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: isSelected
+                                        ? AppColor.kPrimary
+                                        : AppColor.kSamiDarkColor,
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      tab,
+                                      style: TextStyle(
+                                        color: isSelected
+                                            ? Colors.white
+                                            : AppColor.kLightAccentColor,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ),
-                          );
-                        }).toList(),
+                              );
+                            }).toList(),
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -250,14 +319,47 @@ class HomeScreen extends StatelessWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            Text('Sort by: ', style: TextStyle(color: AppColor.kGreyColor, fontSize: 12)),
+                            Text(
+                              'Sort by: ',
+                              style: TextStyle(
+                                color: AppColor.kGreyColor,
+                                fontSize: 12,
+                              ),
+                            ),
                             DropdownButton<String>(
                               dropdownColor: AppColor.kSamiDarkColor,
                               value: homeVM.localSortOrder,
                               items: const [
-                                DropdownMenuItem(value: 'name', child: Text('Name', style: TextStyle(color: Colors.white, fontSize: 12))),
-                                DropdownMenuItem(value: 'date', child: Text('Date Added', style: TextStyle(color: Colors.white, fontSize: 12))),
-                                DropdownMenuItem(value: 'duration', child: Text('Duration', style: TextStyle(color: Colors.white, fontSize: 12))),
+                                DropdownMenuItem(
+                                  value: 'name',
+                                  child: Text(
+                                    'Name',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ),
+                                DropdownMenuItem(
+                                  value: 'date',
+                                  child: Text(
+                                    'Date Added',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ),
+                                DropdownMenuItem(
+                                  value: 'duration',
+                                  child: Text(
+                                    'Duration',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ),
                               ],
                               onChanged: (val) {
                                 if (val != null) homeVM.setLocalSortOrder(val);
@@ -287,13 +389,33 @@ class HomeScreen extends StatelessWidget {
                                 color: AppColor.kPrimary.withValues(alpha: 0.2),
                                 borderRadius: BorderRadius.circular(8),
                               ),
-                              child: const Icon(Icons.music_note, color: Colors.white),
+                              child: const Icon(
+                                Icons.music_note,
+                                color: Colors.white,
+                              ),
                             ),
-                            title: Text(song.title, style: TextStyle(color: AppColor.kLightAccentColor, fontWeight: FontWeight.w600)),
-                            subtitle: Text(song.artist, style: TextStyle(color: AppColor.kGreyColor)),
-                            trailing: Text(song.duration, style: TextStyle(color: AppColor.kGreyColor, fontSize: 12)),
+                            title: Text(
+                              song.title,
+                              style: TextStyle(
+                                color: AppColor.kLightAccentColor,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            subtitle: Text(
+                              _creditLine(song),
+                              style: TextStyle(color: AppColor.kGreyColor),
+                            ),
+                            trailing: Text(
+                              song.duration,
+                              style: TextStyle(
+                                color: AppColor.kGreyColor,
+                                fontSize: 12,
+                              ),
+                            ),
                             onTap: () {
-                              final mappedQueue = homeVM.localDeviceSongs.map((e) => homeVM.convertDeviceSong(e)).toList();
+                              final mappedQueue = homeVM.localDeviceSongs
+                                  .map((e) => homeVM.convertDeviceSong(e))
+                                  .toList();
                               playerVM.playSong(mappedQueue, index);
                             },
                           );
@@ -309,9 +431,22 @@ class HomeScreen extends StatelessWidget {
                           final album = homeVM.localDeviceAlbums[index];
                           return ListTile(
                             contentPadding: EdgeInsets.zero,
-                            leading: const Icon(Icons.album, color: Colors.white, size: 40),
-                            title: Text(album.album, style: TextStyle(color: AppColor.kLightAccentColor, fontWeight: FontWeight.w600)),
-                            subtitle: Text('${album.numOfSongs} songs', style: TextStyle(color: AppColor.kGreyColor)),
+                            leading: const Icon(
+                              Icons.album,
+                              color: Colors.white,
+                              size: 40,
+                            ),
+                            title: Text(
+                              album.album,
+                              style: TextStyle(
+                                color: AppColor.kLightAccentColor,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            subtitle: Text(
+                              '${album.numOfSongs} songs',
+                              style: TextStyle(color: AppColor.kGreyColor),
+                            ),
                           );
                         },
                       )
@@ -325,9 +460,22 @@ class HomeScreen extends StatelessWidget {
                           final artist = homeVM.localDeviceArtists[index];
                           return ListTile(
                             contentPadding: EdgeInsets.zero,
-                            leading: const Icon(Icons.person, color: Colors.white, size: 40),
-                            title: Text(artist.artist, style: TextStyle(color: AppColor.kLightAccentColor, fontWeight: FontWeight.w600)),
-                            subtitle: Text('${artist.numberOfTracks} tracks', style: TextStyle(color: AppColor.kGreyColor)),
+                            leading: const Icon(
+                              Icons.person,
+                              color: Colors.white,
+                              size: 40,
+                            ),
+                            title: Text(
+                              artist.artist,
+                              style: TextStyle(
+                                color: AppColor.kLightAccentColor,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            subtitle: Text(
+                              '${artist.numberOfTracks} tracks',
+                              style: TextStyle(color: AppColor.kGreyColor),
+                            ),
                           );
                         },
                       )
@@ -335,7 +483,10 @@ class HomeScreen extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.all(32.0),
                         child: Center(
-                          child: Text('No items found in ${homeVM.localSubTab}', style: TextStyle(color: AppColor.kGreyColor)),
+                          child: Text(
+                            'No items found in ${homeVM.localSubTab}',
+                            style: TextStyle(color: AppColor.kGreyColor),
+                          ),
                         ),
                       ),
                   ],
@@ -349,7 +500,10 @@ class HomeScreen extends StatelessWidget {
                       decoration: InputDecoration(
                         hintText: 'Search songs, 30+ tracks, artists...',
                         hintStyle: TextStyle(color: AppColor.kGreyColor),
-                        prefixIcon: Icon(Icons.search, color: AppColor.kGreyColor),
+                        prefixIcon: Icon(
+                          Icons.search,
+                          color: AppColor.kGreyColor,
+                        ),
                         filled: true,
                         fillColor: AppColor.kSamiDarkColor,
                         border: OutlineInputBorder(
@@ -373,16 +527,23 @@ class HomeScreen extends StatelessWidget {
                           onTap: () => homeVM.filterByCategory(cat),
                           child: Container(
                             margin: const EdgeInsets.only(right: 8),
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 8,
+                            ),
                             decoration: BoxDecoration(
-                              color: isSelected ? AppColor.kPrimary : AppColor.kSamiDarkColor,
+                              color: isSelected
+                                  ? AppColor.kPrimary
+                                  : AppColor.kSamiDarkColor,
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Center(
                               child: Text(
                                 cat,
                                 style: TextStyle(
-                                  color: isSelected ? Colors.white : AppColor.kLightAccentColor,
+                                  color: isSelected
+                                      ? Colors.white
+                                      : AppColor.kLightAccentColor,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
@@ -393,11 +554,14 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  if (homeVM.searchQuery.isNotEmpty || homeVM.selectedCategory != 'All') ...[
+                  if (homeVM.searchQuery.isNotEmpty ||
+                      homeVM.selectedCategory != 'All') ...[
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       child: Text(
-                        homeVM.selectedCategory != 'All' ? '${homeVM.selectedCategory} Tracks' : 'Search Results',
+                        homeVM.selectedCategory != 'All'
+                            ? '${homeVM.selectedCategory} Tracks'
+                            : 'Search Results',
                         style: TextStyle(
                           color: AppColor.kLightAccentColor,
                           fontSize: 18,
@@ -410,7 +574,10 @@ class HomeScreen extends StatelessWidget {
                         ? Center(
                             child: Padding(
                               padding: const EdgeInsets.all(32.0),
-                              child: Text('No tracks found', style: TextStyle(color: AppColor.kGreyColor)),
+                              child: Text(
+                                'No tracks found',
+                                style: TextStyle(color: AppColor.kGreyColor),
+                              ),
                             ),
                           )
                         : ListView.builder(
@@ -428,16 +595,32 @@ class HomeScreen extends StatelessWidget {
                                   height: 50,
                                   borderRadius: BorderRadius.circular(8),
                                 ),
-                                title: Text(song.title, style: TextStyle(color: AppColor.kLightAccentColor, fontWeight: FontWeight.w600)),
-                                subtitle: Text(song.artist, style: TextStyle(color: AppColor.kGreyColor)),
+                                title: Text(
+                                  song.title,
+                                  style: TextStyle(
+                                    color: AppColor.kLightAccentColor,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                subtitle: Text(
+                                  _creditLine(song),
+                                  style: TextStyle(color: AppColor.kGreyColor),
+                                ),
                                 trailing: IconButton(
                                   icon: Icon(
-                                    song.isFavorite ? Icons.favorite : Icons.favorite_border,
-                                    color: song.isFavorite ? AppColor.kPrimary : AppColor.kGreyColor,
+                                    song.isFavorite
+                                        ? Icons.favorite
+                                        : Icons.favorite_border,
+                                    color: song.isFavorite
+                                        ? AppColor.kPrimary
+                                        : AppColor.kGreyColor,
                                   ),
                                   onPressed: () => homeVM.toggleFavorite(song),
                                 ),
-                                onTap: () => playerVM.playSong(homeVM.searchResults, index),
+                                onTap: () => playerVM.playSong(
+                                  homeVM.searchResults,
+                                  index,
+                                ),
                               );
                             },
                           ),
@@ -454,6 +637,14 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 12),
+                    if (homeVM.onlineError != null)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(
+                          homeVM.onlineError!,
+                          style: TextStyle(color: AppColor.kGreyColor),
+                        ),
+                      ),
                     SizedBox(
                       height: 200,
                       child: ListView.builder(
@@ -463,7 +654,8 @@ class HomeScreen extends StatelessWidget {
                         itemBuilder: (context, index) {
                           final song = homeVM.featuredSongs[index];
                           return GestureDetector(
-                            onTap: () => playerVM.playSong(homeVM.featuredSongs, index),
+                            onTap: () =>
+                                playerVM.playSong(homeVM.featuredSongs, index),
                             child: Container(
                               width: 140,
                               margin: const EdgeInsets.only(right: 12),
@@ -488,7 +680,7 @@ class HomeScreen extends StatelessWidget {
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                   Text(
-                                    song.artist,
+                                    _creditLine(song),
                                     style: TextStyle(
                                       color: AppColor.kGreyColor,
                                       fontSize: 12,
@@ -516,6 +708,14 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 12),
+                    if (homeVM.onlineError != null)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(
+                          homeVM.onlineError!,
+                          style: TextStyle(color: AppColor.kGreyColor),
+                        ),
+                      ),
                     ListView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
@@ -531,16 +731,30 @@ class HomeScreen extends StatelessWidget {
                             height: 50,
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          title: Text(song.title, style: TextStyle(color: AppColor.kLightAccentColor, fontWeight: FontWeight.w600)),
-                          subtitle: Text(song.artist, style: TextStyle(color: AppColor.kGreyColor)),
+                          title: Text(
+                            song.title,
+                            style: TextStyle(
+                              color: AppColor.kLightAccentColor,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          subtitle: Text(
+                            _creditLine(song),
+                            style: TextStyle(color: AppColor.kGreyColor),
+                          ),
                           trailing: IconButton(
                             icon: Icon(
-                              song.isFavorite ? Icons.favorite : Icons.favorite_border,
-                              color: song.isFavorite ? AppColor.kPrimary : AppColor.kGreyColor,
+                              song.isFavorite
+                                  ? Icons.favorite
+                                  : Icons.favorite_border,
+                              color: song.isFavorite
+                                  ? AppColor.kPrimary
+                                  : AppColor.kGreyColor,
                             ),
                             onPressed: () => homeVM.toggleFavorite(song),
                           ),
-                          onTap: () => playerVM.playSong(homeVM.recommendedSongs, index),
+                          onTap: () =>
+                              playerVM.playSong(homeVM.recommendedSongs, index),
                         );
                       },
                     ),
@@ -553,5 +767,10 @@ class HomeScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String _creditLine(SongModel song) {
+    if (song.providerName.isEmpty) return song.artist;
+    return '${song.artist} · ${song.providerName} · Creative Commons';
   }
 }

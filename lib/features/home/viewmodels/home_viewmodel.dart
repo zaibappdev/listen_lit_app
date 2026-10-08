@@ -1,19 +1,23 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:on_audio_query/on_audio_query.dart' as audio;
 import '../../../../data/models/song_model.dart';
-import '../../../../data/repositories/music_repository.dart';
+import '../../../../data/repositories/online_music_repository.dart';
 import '../../../../data/services/storage_service.dart';
 
 class HomeViewModel extends ChangeNotifier {
-  final MusicRepository _repository = MusicRepository();
+  final JamendoMusicRepository _onlineRepository = JamendoMusicRepository();
   final audio.OnAudioQuery _audioQuery = audio.OnAudioQuery();
+  Timer? _searchDebounce;
+  late final StreamSubscription<dynamic> _favoriteSubscription;
 
   List<SongModel> featuredSongs = [];
   List<SongModel> recommendedSongs = [];
   List<String> categories = [];
   List<SongModel> searchResults = [];
 
-  bool isLocalSection = false; // false = Online, true = Local
+  bool isLocalSection = true; // Local music is the first view after onboarding.
   String localSubTab = 'Songs'; // Songs, Albums, Artists, Folders, Playlists
   List<audio.SongModel> localDeviceSongs = [];
   List<audio.AlbumModel> localDeviceAlbums = [];
@@ -23,27 +27,69 @@ class HomeViewModel extends ChangeNotifier {
   String localSortOrder = 'name'; // name, date, duration
 
   bool isLoading = false;
+  bool isSearchLoading = false;
+  String? onlineError;
   String searchQuery = '';
   String selectedCategory = 'All';
 
   HomeViewModel() {
+    _favoriteSubscription = StorageService.favoriteChanges.listen((_) {
+      for (final song in [
+        ...featuredSongs,
+        ...recommendedSongs,
+        ...searchResults,
+      ]) {
+        song.isFavorite = StorageService.isFavorite(song.id);
+      }
+      notifyListeners();
+    });
     loadData();
+    if (StorageService.getPermissionHandled()) {
+      loadLocalMusic();
+    }
   }
 
-  void loadData() {
+  Future<void> loadData() async {
     isLoading = true;
+    onlineError = null;
     notifyListeners();
 
-    featuredSongs = _repository.getFeaturedSongs();
-    recommendedSongs = _repository.getRecommendedSongs();
-    categories = _repository.getCategories();
-
-    for (var song in [...featuredSongs, ...recommendedSongs]) {
-      song.isFavorite = StorageService.isFavorite(song.id);
+    categories = const [
+      'All',
+      'Pop',
+      'Rock',
+      'Hip Hop',
+      'Chill',
+      'Workout',
+      'Jazz',
+      'Electronic',
+      'Synthwave',
+      'Ambient',
+    ];
+    if (!_onlineRepository.isConfigured) {
+      featuredSongs = [];
+      recommendedSongs = [];
+      onlineError =
+          'Set JAMENDO_CLIENT_ID at build time to browse licensed music.';
+      isLoading = false;
+      notifyListeners();
+      return;
     }
-
-    isLoading = false;
-    notifyListeners();
+    try {
+      final tracks = await _onlineRepository.featured(limit: 30);
+      featuredSongs = tracks.take(10).toList(growable: false);
+      recommendedSongs = tracks.skip(10).toList(growable: false);
+      for (final song in tracks) {
+        song.isFavorite = StorageService.isFavorite(song.id);
+      }
+    } on OnlineMusicException catch (error) {
+      onlineError = error.message;
+      featuredSongs = [];
+      recommendedSongs = [];
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
   }
 
   void switchSection(bool local) {
@@ -64,8 +110,8 @@ class HomeViewModel extends ChangeNotifier {
           sortType: localSortOrder == 'date'
               ? audio.SongSortType.DATE_ADDED
               : localSortOrder == 'duration'
-                  ? audio.SongSortType.DURATION
-                  : audio.SongSortType.TITLE,
+              ? audio.SongSortType.DURATION
+              : audio.SongSortType.TITLE,
           orderType: audio.OrderType.ASC_OR_SMALLER,
           uriType: audio.UriType.EXTERNAL,
         );
@@ -73,9 +119,7 @@ class HomeViewModel extends ChangeNotifier {
         localDeviceArtists = await _audioQuery.queryArtists();
         localDevicePlaylists = await _audioQuery.queryPlaylists();
       }
-    } catch (e) {
-      debugPrint('Error loading local music: $e');
-    }
+    } catch (_) {}
     isLocalLoading = false;
     notifyListeners();
   }
@@ -115,39 +159,86 @@ class HomeViewModel extends ChangeNotifier {
     if (category == 'All') {
       searchResults = [];
       searchQuery = '';
+      onlineError = null;
+      isSearchLoading = false;
+      notifyListeners();
     } else {
-      searchResults = _repository.getSongsByCategory(category);
+      unawaited(_searchGenre(category));
     }
-    for (var song in searchResults) {
-      song.isFavorite = StorageService.isFavorite(song.id);
+  }
+
+  Future<void> _searchGenre(String genre) async {
+    if (!_onlineRepository.isConfigured) {
+      onlineError =
+          'Set JAMENDO_CLIENT_ID at build time to browse licensed music.';
+      notifyListeners();
+      return;
     }
+    isSearchLoading = true;
+    onlineError = null;
     notifyListeners();
+    try {
+      searchResults = await _onlineRepository.byGenre(genre);
+      for (final song in searchResults) {
+        song.isFavorite = StorageService.isFavorite(song.id);
+      }
+    } on OnlineMusicException catch (error) {
+      searchResults = [];
+      onlineError = error.message;
+    } finally {
+      isSearchLoading = false;
+      notifyListeners();
+    }
   }
 
   void search(String query) {
     searchQuery = query;
-    if (query.isEmpty && selectedCategory == 'All') {
+    _searchDebounce?.cancel();
+    if (query.trim().isEmpty) {
       searchResults = [];
-    } else {
-      final all = _repository.getAllSongs();
-      searchResults = all.where((s) {
-        final matchesQuery = query.isEmpty ||
-            s.title.toLowerCase().contains(query.toLowerCase()) ||
-            s.artist.toLowerCase().contains(query.toLowerCase()) ||
-            s.album.toLowerCase().contains(query.toLowerCase());
-        final matchesCategory = selectedCategory == 'All' || s.category.toLowerCase() == selectedCategory.toLowerCase();
-        return matchesQuery && (query.isEmpty ? matchesCategory : true);
-      }).toList();
+      isSearchLoading = false;
+      onlineError = null;
+      notifyListeners();
+      return;
     }
-    for (var song in searchResults) {
-      song.isFavorite = StorageService.isFavorite(song.id);
-    }
+    isSearchLoading = true;
+    onlineError = null;
     notifyListeners();
+    if (!_onlineRepository.isConfigured) {
+      isSearchLoading = false;
+      onlineError =
+          'Set JAMENDO_CLIENT_ID at build time to search licensed music.';
+      notifyListeners();
+      return;
+    }
+    _searchDebounce = Timer(const Duration(milliseconds: 300), () async {
+      try {
+        final results = await _onlineRepository.search(query);
+        searchResults = results;
+        for (final song in results) {
+          song.isFavorite = StorageService.isFavorite(song.id);
+        }
+      } on OnlineMusicException catch (error) {
+        searchResults = [];
+        onlineError = error.message;
+      } finally {
+        isSearchLoading = false;
+        notifyListeners();
+      }
+    });
   }
 
   void toggleFavorite(SongModel song) {
     song.isFavorite = !song.isFavorite;
-    StorageService.toggleFavorite(song.id, song.isFavorite);
+    StorageService.toggleFavorite(song.id, song.isFavorite, song: song);
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _searchDebounce?.cancel();
+    _favoriteSubscription.cancel();
+    _onlineRepository.close();
+    super.dispose();
   }
 }

@@ -3,9 +3,10 @@ import 'package:just_audio/just_audio.dart';
 import '../../../../data/models/song_model.dart';
 import '../../../../data/services/audio_service.dart';
 import '../../../../data/services/storage_service.dart';
+import '../../../../data/services/notification_permission_service.dart';
 
 class PlayerViewModel extends ChangeNotifier {
-  final AudioService _audioService = AudioService();
+  final AudioService _audioService;
 
   AudioService get audioService => _audioService;
 
@@ -19,9 +20,11 @@ class PlayerViewModel extends ChangeNotifier {
   bool isShuffleEnabled = false;
   LoopMode repeatMode = LoopMode.off;
   double playbackSpeed = 1.0;
+  String? playbackError;
   List<SongModel> currentQueue = [];
 
-  PlayerViewModel() {
+  PlayerViewModel(this._audioService) {
+    _audioService.setVolume(StorageService.getVolume());
     _initListeners();
   }
 
@@ -42,10 +45,17 @@ class PlayerViewModel extends ChangeNotifier {
   }
 
   Future<void> playSong(List<SongModel> playlist, int index) async {
+    await NotificationPermissionService.requestIfNeeded();
     currentQueue = playlist;
-    await _audioService.setPlaylist(playlist, initialIndex: index);
+    playbackError = null;
+    try {
+      await _audioService.setPlaylist(playlist, initialIndex: index);
+    } catch (_) {
+      playbackError = 'This track could not be played. Try another song.';
+      notifyListeners();
+    }
     if (currentSong != null) {
-      StorageService.addRecent(currentSong!.id);
+      StorageService.addRecentSong(currentSong!);
     }
     notifyListeners();
   }
@@ -71,18 +81,26 @@ class PlayerViewModel extends ChangeNotifier {
   Future<void> next() async {
     await _audioService.playNext();
     if (currentSong != null) {
-      StorageService.addRecent(currentSong!.id);
+      StorageService.addRecentSong(currentSong!);
     }
     notifyListeners();
   }
 
   Future<void> previous() async {
+    if (_audioService.player.position > const Duration(seconds: 3)) {
+      await _audioService.seek(Duration.zero);
+      await _audioService.play();
+      notifyListeners();
+      return;
+    }
     await _audioService.playPrevious();
     if (currentSong != null) {
-      StorageService.addRecent(currentSong!.id);
+      StorageService.addRecentSong(currentSong!);
     }
     notifyListeners();
   }
+
+  Future<void> setVolume(double volume) => _audioService.setVolume(volume);
 
   Future<void> toggleShuffle() async {
     isShuffleEnabled = !isShuffleEnabled;
