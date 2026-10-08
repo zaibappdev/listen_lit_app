@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:listen_lit_app/features/auth/login/screens/login_screen.dart';
 import '../../../core/constant/app_colors.dart';
+import '../../../data/services/storage_service.dart';
 import '../../auth/login/widgets/primary_button.dart';
 import '../widgets/on_boarding.dart';
 import '../widgets/on_boarding_card.dart';
@@ -24,8 +26,66 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
 
   @override
   void dispose() {
-    _pageController.dispose(); // <- important: dispose controller
+    _pageController.dispose();
     super.dispose();
+  }
+
+  Future<void> _requestPermissionAndProceed() async {
+    PermissionStatus status = await Permission.audio.status;
+    if (!mounted) return;
+    if (!status.isGranted) {
+      status = await Permission.audio.request();
+      if (!mounted) return;
+    }
+    if (!status.isGranted) {
+      status = await Permission.storage.request();
+      if (!mounted) return;
+    }
+
+    if (status.isGranted) {
+      await StorageService.setPermissionHandled(true);
+      if (!mounted) return;
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginScreen()),
+      );
+    } else if (status.isPermanentlyDenied) {
+      if (!mounted) return;
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          backgroundColor: AppColor.kSamiDarkColor,
+          title: Text('Permission Required', style: TextStyle(color: AppColor.kLightAccentColor)),
+          content: Text(
+            'Storage permission is permanently denied. Please enable it in app settings to play music from your device.',
+            style: TextStyle(color: AppColor.kGreyColor),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('Cancel', style: TextStyle(color: AppColor.kGreyColor)),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.pop(context);
+                await openAppSettings();
+              },
+              child: Text('Open Settings', style: TextStyle(color: AppColor.kPrimary)),
+            ),
+          ],
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Storage access is required to access local device music.')),
+      );
+      await StorageService.setPermissionHandled(true);
+      if (!mounted) return;
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginScreen()),
+      );
+    }
   }
 
   @override
@@ -44,7 +104,6 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
 
             return Column(
               children: [
-                // Top Image area (updates with current page)
                 SizedBox(
                   height: imageAreaHeight,
                   width: double.infinity,
@@ -60,8 +119,6 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                     ),
                   ),
                 ),
-
-                // Bottom sliding card with PageView
                 Expanded(
                   child: Container(
                     width: double.infinity,
@@ -74,7 +131,6 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                     ),
                     child: Column(
                       children: [
-                        // PageView (titles / descriptions)
                         Expanded(
                           child: PageView.builder(
                             controller: _pageController,
@@ -102,8 +158,6 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                             },
                           ),
                         ),
-
-                        // Bottom button area (responsive padding)
                         Padding(
                           padding: EdgeInsets.fromLTRB(
                             width * 0.06,
@@ -113,22 +167,24 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                           ),
                           child: PrimaryButton(
                             onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => LoginScreen(),
-                                ),
-                              );
+                              if (_currentIndex == pageViewList.length - 1) {
+                                _requestPermissionAndProceed();
+                              } else {
+                                _pageController.nextPage(
+                                  duration: const Duration(milliseconds: 350),
+                                  curve: Curves.easeInOut,
+                                );
+                              }
                             },
                             text: _currentIndex == pageViewList.length - 1
-                                ? 'Get Started'
+                                ? 'Allow Access & Get Started'
                                 : 'Continue',
                             bgColor: AppColor.kPrimary,
                             borderRadius: 10,
                             height: 52,
                             width: double.infinity,
                             textColor: AppColor.kWhiteColor,
-                            fontSize: width * 0.045,
+                            fontSize: width * 0.042,
                           ),
                         ),
                       ],

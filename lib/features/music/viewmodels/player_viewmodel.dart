@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:just_audio/just_audio.dart';
 import '../../../../data/models/song_model.dart';
 import '../../../../data/services/audio_service.dart';
 import '../../../../data/services/storage_service.dart';
@@ -14,6 +15,11 @@ class PlayerViewModel extends ChangeNotifier {
 
   Duration position = Duration.zero;
   Duration duration = Duration.zero;
+
+  bool isShuffleEnabled = false;
+  LoopMode repeatMode = LoopMode.off;
+  double playbackSpeed = 1.0;
+  List<SongModel> currentQueue = [];
 
   PlayerViewModel() {
     _initListeners();
@@ -36,6 +42,7 @@ class PlayerViewModel extends ChangeNotifier {
   }
 
   Future<void> playSong(List<SongModel> playlist, int index) async {
+    currentQueue = playlist;
     await _audioService.setPlaylist(playlist, initialIndex: index);
     if (currentSong != null) {
       StorageService.addRecent(currentSong!.id);
@@ -49,6 +56,11 @@ class PlayerViewModel extends ChangeNotifier {
     } else {
       await _audioService.play();
     }
+    notifyListeners();
+  }
+
+  Future<void> stopPlayer() async {
+    await _audioService.stop();
     notifyListeners();
   }
 
@@ -70,6 +82,39 @@ class PlayerViewModel extends ChangeNotifier {
       StorageService.addRecent(currentSong!.id);
     }
     notifyListeners();
+  }
+
+  Future<void> toggleShuffle() async {
+    isShuffleEnabled = !isShuffleEnabled;
+    await _audioService.setShuffleModeEnabled(isShuffleEnabled);
+    notifyListeners();
+  }
+
+  Future<void> cycleRepeatMode() async {
+    if (repeatMode == LoopMode.off) {
+      repeatMode = LoopMode.all;
+    } else if (repeatMode == LoopMode.all) {
+      repeatMode = LoopMode.one;
+    } else {
+      repeatMode = LoopMode.off;
+    }
+    await _audioService.setLoopMode(repeatMode);
+    notifyListeners();
+  }
+
+  Future<void> setSpeed(double speed) async {
+    playbackSpeed = speed;
+    await _audioService.setSpeed(speed);
+    notifyListeners();
+  }
+
+  void setSleepTimer(Duration duration) {
+    Future.delayed(duration, () {
+      if (_audioService.player.playing) {
+        _audioService.pause();
+        notifyListeners();
+      }
+    });
   }
 
   @override

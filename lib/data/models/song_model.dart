@@ -6,6 +6,7 @@ class SongModel {
   final String duration;
   final String coverUrl;
   final String audioUrl;
+  final String category;
   bool isFavorite;
 
   SongModel({
@@ -16,6 +17,7 @@ class SongModel {
     required this.duration,
     required this.coverUrl,
     required this.audioUrl,
+    required this.category,
     this.isFavorite = false,
   });
 
@@ -27,6 +29,7 @@ class SongModel {
         'duration': duration,
         'coverUrl': coverUrl,
         'audioUrl': audioUrl,
+        'category': category,
         'isFavorite': isFavorite,
       };
 
@@ -38,6 +41,7 @@ class SongModel {
         duration: json['duration'] ?? '3:45',
         coverUrl: json['coverUrl'] ?? '',
         audioUrl: json['audioUrl'] ?? '',
+        category: json['category'] ?? 'Pop',
         isFavorite: json['isFavorite'] ?? false,
       );
 }

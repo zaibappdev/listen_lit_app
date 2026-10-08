@@ -19,8 +19,14 @@ class StorageService {
   static Future<void> setDarkMode(bool isDark) async => await _settings.put('isDarkMode', isDark);
   static bool getDarkMode() => _settings.get('isDarkMode', defaultValue: true);
 
+  static Future<void> setThemeMode(String mode) async => await _settings.put('theme_mode', mode);
+  static String getThemeMode() => _settings.get('theme_mode', defaultValue: 'system');
+
   static Future<void> setVolume(double volume) async => await _settings.put('volume', volume);
   static double getVolume() => _settings.get('volume', defaultValue: 1.0);
+
+  static Future<void> setPermissionHandled(bool handled) async => await _settings.put('permission_handled', handled);
+  static bool getPermissionHandled() => _settings.get('permission_handled', defaultValue: false);
 
   // Favorites
   static Box get _favorites => Hive.box(_favoritesBox);

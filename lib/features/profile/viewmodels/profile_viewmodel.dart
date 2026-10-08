@@ -13,7 +13,7 @@ class ProfileViewModel extends ChangeNotifier {
   }
 
   void loadProfileData() {
-    final all = [..._repository.getFeaturedSongs(), ..._repository.getRecommendedSongs()];
+    final all = _repository.getAllSongs();
     
     favorites = all.where((s) => StorageService.isFavorite(s.id)).toList();
     

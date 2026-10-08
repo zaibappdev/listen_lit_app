@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'data/services/storage_service.dart';
 import 'core/constant/app_theme.dart';
 import 'features/auth/viewmodels/auth_viewmodel.dart';
+import 'features/auth/login/screens/login_screen.dart';
 import 'features/music/viewmodels/player_viewmodel.dart';
 import 'features/home/viewmodels/home_viewmodel.dart';
 import 'features/profile/viewmodels/profile_viewmodel.dart';
@@ -29,14 +30,30 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ProfileViewModel()),
         ChangeNotifierProvider(create: (_) => SettingsViewModel()),
       ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Listen Lit App',
-        theme: AppTheme.darkTheme,
-        home: StorageService.getUser() != null
-            ? const MainNavigationScreen()
-            : const OnBoardingScreen(),
+      child: Consumer<SettingsViewModel>(
+        builder: (context, settingsVM, child) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: 'Listen Lit App',
+            theme: AppTheme.lightTheme,
+            darkTheme: AppTheme.darkTheme,
+            themeMode: settingsVM.themeMode,
+            home: _getInitialScreen(),
+          );
+        },
       ),
     );
+  }
+
+  Widget _getInitialScreen() {
+    final permissionHandled = StorageService.getPermissionHandled();
+    final user = StorageService.getUser();
+    if (!permissionHandled) {
+      return const OnBoardingScreen();
+    } else if (user == null) {
+      return LoginScreen();
+    } else {
+      return const MainNavigationScreen();
+    }
   }
 }

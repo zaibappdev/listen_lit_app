@@ -28,7 +28,6 @@ class AudioService {
   Future<void> loadAndPlay(SongModel song) async {
     try {
       _currentSong = song;
-      // Using reliable royalty-free sample audio streams if URL is empty or demo
       final url = song.audioUrl.isNotEmpty
           ? song.audioUrl
           : 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3';
@@ -42,8 +41,15 @@ class AudioService {
 
   Future<void> play() async => await _player.play();
   Future<void> pause() async => await _player.pause();
+  Future<void> stop() async {
+    await _player.stop();
+    _currentSong = null;
+  }
   Future<void> seek(Duration position) async => await _player.seek(position);
   Future<void> setVolume(double volume) async => await _player.setVolume(volume);
+  Future<void> setLoopMode(LoopMode mode) async => await _player.setLoopMode(mode);
+  Future<void> setShuffleModeEnabled(bool enabled) async => await _player.setShuffleModeEnabled(enabled);
+  Future<void> setSpeed(double speed) async => await _player.setSpeed(speed);
 
   Future<void> playNext() async {
     if (_playlist.isEmpty) return;
