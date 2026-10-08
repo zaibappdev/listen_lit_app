@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../../../app/constant/app_colors.dart';
+import '../../../../core/constant/app_colors.dart';
 
 class PrimaryTextFormField extends StatelessWidget {
-  PrimaryTextFormField({
+  const PrimaryTextFormField({
     super.key,
     required this.hintText,
     this.border,
@@ -34,11 +34,11 @@ class PrimaryTextFormField extends StatelessWidget {
       errorBorder,
       focusedErrorBorder;
   final List<TextInputFormatter>? inputFormatters;
-  Widget? prefixIcon;
-  Function(PointerDownEvent)? onTapOutside;
+  final Widget? prefixIcon;
+  final Function(PointerDownEvent)? onTapOutside;
   final Function(String)? onChanged;
   final double width, height;
-  TextEditingController controller;
+  final TextEditingController controller;
   final Color? hintTextColor, prefixIconColor;
   final TextInputType? keyboardType;
 

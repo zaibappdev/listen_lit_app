@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:listen_lit_app/features/on_boarding/widgets/simple_dots_indicator.dart';
-import '../../../app/constant/app_colors.dart';
+import '../../../core/constant/app_colors.dart';
 import 'on_boarding.dart';
 
 class OnboardingCard extends StatelessWidget {
@@ -47,7 +47,7 @@ class OnboardingCard extends StatelessWidget {
             position: currentIndex,
             onDotTapped: onDotTapped,
             activeColor: AppColor.kPrimary,
-            inactiveColor: Colors.grey.withOpacity(0.45),
+            inactiveColor: Colors.grey.withValues(alpha: 0.45),
           ),
         ],
       ),

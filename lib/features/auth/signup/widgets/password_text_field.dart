@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../app/constant/app_colors.dart';
+import '../../../../core/constant/app_colors.dart';
 
 class PasswordTextField extends StatefulWidget {
   final String hintText;
@@ -25,10 +25,10 @@ class PasswordTextField extends StatefulWidget {
   });
 
   @override
-  _PasswordTextFieldState createState() => _PasswordTextFieldState();
+  PasswordTextFieldState createState() => PasswordTextFieldState();
 }
 
-class _PasswordTextFieldState extends State<PasswordTextField> {
+class PasswordTextFieldState extends State<PasswordTextField> {
   bool _obscureText = false;
 
   @override

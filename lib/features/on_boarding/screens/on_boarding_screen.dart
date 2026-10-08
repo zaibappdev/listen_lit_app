@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:listen_lit_app/features/auth/login/screens/login_Screen.dart';
-import '../../../app/constant/app_colors.dart';
+import 'package:listen_lit_app/features/auth/login/screens/login_screen.dart';
+import '../../../core/constant/app_colors.dart';
 import '../../auth/login/widgets/primary_button.dart';
 import '../widgets/on_boarding.dart';
 import '../widgets/on_boarding_card.dart';

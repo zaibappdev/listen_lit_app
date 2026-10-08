@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 
-import '../../../../app/constant/app_colors.dart';
+import '../../../../core/constant/app_colors.dart';
 
 class SocialLoginButton extends StatelessWidget {
   final String text, iconPath;

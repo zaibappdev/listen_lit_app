@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../app/constant/app_colors.dart';
+import '../../../../core/constant/app_colors.dart';
 
 class DividerRow extends StatelessWidget {
   const DividerRow({super.key});

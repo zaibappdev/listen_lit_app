@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../../app/constant/app_colors.dart';
-import '../../../../app/constant/app_images.dart';
+import 'package:provider/provider.dart';
+import '../../../../core/constant/app_colors.dart';
+import '../../../../core/constant/app_images.dart';
 import '../../signup/screens/sign_up_screen.dart';
 import '../widgets/background_image_container.dart';
 import '../widgets/custom_rich_text.dart';
@@ -9,6 +10,8 @@ import '../widgets/primary_button.dart';
 import '../widgets/primary_text_button.dart';
 import '../widgets/primary_text_form_field.dart';
 import '../widgets/social_login_button.dart';
+import '../../viewmodels/auth_viewmodel.dart';
+import '../../../main_navigation/views/main_navigation_screen.dart';
 
 class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
@@ -18,11 +21,11 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final authVM = context.read<AuthViewModel>();
 
     return Scaffold(
       backgroundColor: Colors.transparent,
       resizeToAvoidBottomInset: false,
-
       body: BackgroundImageContainer(
         child: SafeArea(
           child: SingleChildScrollView(
@@ -49,10 +52,10 @@ class LoginScreen extends StatelessWidget {
                   ),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
-                    color: AppColor.kSamiDarkColor.withOpacity(0.4),
+                    color: AppColor.kSamiDarkColor.withValues(alpha: 0.4),
                     boxShadow: [
                       BoxShadow(
-                        color: AppColor.kSamiDarkColor.withOpacity(0.5),
+                        color: AppColor.kSamiDarkColor.withValues(alpha: 0.5),
                         blurRadius: 10,
                       ),
                     ],
@@ -72,7 +75,16 @@ class LoginScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 16),
                       PrimaryButton(
-                        onTap: () {},
+                        onTap: () async {
+                          await authVM.login(emailController.text, 'password');
+                          if (!context.mounted) return;
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const MainNavigationScreen(),
+                            ),
+                          );
+                        },
                         borderRadius: 8,
                         fontSize: 14,
                         height: 48,
@@ -94,19 +106,46 @@ class LoginScreen extends StatelessWidget {
                       SocialLoginButton(
                         text: 'Login with Facebook',
                         iconPath: AppImagePath.kLogoFacebook,
-                        onTap: () {},
+                        onTap: () async {
+                          await authVM.login('facebook@user.com', 'password');
+                          if (!context.mounted) return;
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const MainNavigationScreen(),
+                            ),
+                          );
+                        },
                       ),
                       const SizedBox(height: 16),
                       SocialLoginButton(
                         text: 'Login with Google',
                         iconPath: AppImagePath.kGoogleLogo,
-                        onTap: () {},
+                        onTap: () async {
+                          await authVM.login('google@user.com', 'password');
+                          if (!context.mounted) return;
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const MainNavigationScreen(),
+                            ),
+                          );
+                        },
                       ),
                       const SizedBox(height: 16),
                       SocialLoginButton(
                         text: 'Login with Apple',
                         iconPath: AppImagePath.kApple,
-                        onTap: () {},
+                        onTap: () async {
+                          await authVM.login('apple@user.com', 'password');
+                          if (!context.mounted) return;
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const MainNavigationScreen(),
+                            ),
+                          );
+                        },
                       ),
                       const SizedBox(height: 32),
                       CustomRichText(
